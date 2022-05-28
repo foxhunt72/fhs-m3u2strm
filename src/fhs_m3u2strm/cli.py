@@ -6,33 +6,6 @@ import typer
 main = typer.Typer()
 
 @main.command()
-def test(
-        m3ufile: str,
-):
-    """Console script for fhs_m3u2strm."""
-    from .import_m3u import import_m3u_file
-    from .subgroup import subgroup_m3uchannels
-    from .clean import clean_tvg_name, clean_name
-    from .m3u_to_episodes import m3u_to_episodes
-    from .strm_files import strm_files_for_episodes
-
-    result = import_m3u_file(m3ufile)
-    if result == None:
-        print(f"no result for file {m3ufile}")
-        return 1
-    #pprint(result)
-    print(len(result))
-    result2 = subgroup_m3uchannels(result, '[NL] VIDEOLAND')
-    result3 = list(clean_tvg_name(result2))
-    pprint(len(result3))
-    #pprint(result3)
-
-    result4 = m3u_to_episodes(result3)
-    strm_files_for_episodes('/tmp/videoland', result4)
-
-    return 0
-
-@main.command()
 def vod_group_to_dir(
     m3ufile: str = typer.Option(..., envvar="fhs_m3ufile"),
     group: str = typer.Option(...),
