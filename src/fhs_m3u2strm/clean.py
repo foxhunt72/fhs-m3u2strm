@@ -10,9 +10,6 @@ def clean_name(name):
     ]
     for cs in clean_strings:
         name = name.replace(cs, '')
-
-    if name.endswith(' VIDEOLAND'):
-        name = name[0:-10]
     return name
 
 

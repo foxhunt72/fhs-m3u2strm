@@ -1,5 +1,4 @@
 """Save files"""
-import re
 from dataclasses import dataclass
 from .clean import clean_name, clean_weird_characters
 import pathlib
@@ -14,7 +13,7 @@ class M3uEpisode:
     sources: list
 
 
-def strm_files_for_episodes(start_dir, m3u_episodes):
+def strm_files_for_episodes(start_dir, m3u_episodes, season_folder=True):
     """Create episodes m3u stream."""
 
     for e in m3u_episodes:
@@ -22,6 +21,8 @@ def strm_files_for_episodes(start_dir, m3u_episodes):
         path = pathlib.Path(start_dir)
         path = path.joinpath(name)
         filename = f"{name} S{e.episode_season:02}E{e.episode_nr:02}.strm" 
+        if season_folder is True:
+            path = path.joinpath(f"Season {e.episode_season}")
         path = path.joinpath(filename)
         path.parent.mkdir(parents=True, exist_ok=True)
         print(path)

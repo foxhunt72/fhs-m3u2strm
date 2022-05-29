@@ -12,8 +12,10 @@ def vod_group_to_dir(
     output_dir: str = typer.Option(...),
     rm_end_name: str = typer.Option("", help="remove text from end of serie name"),
     rm_in_name: str = typer.Option("", help="remove text in tvg_name"),
+    season_folders: bool = typer.Option(True, help="add season folders")
 ):
     """Console script for fhs_m3u2strm."""
+
     from .import_m3u import import_m3u_file
     from .subgroup import subgroup_m3uchannels
     from .clean import clean_tvg_name, clean_name, remove_text_from_tvg_name, remove_text_from_end_serie_name
@@ -30,7 +32,7 @@ def vod_group_to_dir(
     m3u_episodes = m3u_to_episodes(subgroup)
     if rm_end_name != "":
         m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, rm_end_name)
-    strm_files_for_episodes(output_dir, m3u_episodes)
+    strm_files_for_episodes(output_dir, m3u_episodes, season_folder=season_folders)
 
     return 0
 
