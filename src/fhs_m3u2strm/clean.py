@@ -3,16 +3,6 @@
 import re
 
 
-def clean_name(name):
-    clean_strings = [
-        '[NL] ',
-        '[NL]'
-    ]
-    for cs in clean_strings:
-        name = name.replace(cs, '')
-    return name
-
-
 def clean_weird_characters(name):
     return re.sub(r'[^A-Za-z0-9 _-]+', '', name)
 
@@ -42,5 +32,21 @@ def remove_text_from_end_serie_name(m3u_episodes, text):
     for x in m3u_episodes:
         if x.serie_name.endswith(text):
             x.serie_name = x.serie_name[0:-len(text)]
+        yield x
+
+def clean_square_brackets(tekst):
+    test = re.compile("(.*)\[(.*?)\](.*)")
+    reg = test.findall(tekst)
+    if len(reg) > 0:
+        tekst = reg[0][0]+reg[0][2]
+        tekst = clean_square_brackets(tekst)
+        return tekst
+    tekst = tekst.replace('  ', ' ').strip()
+    return tekst
+
+
+def remove_square_brackets_from_serie_name(m3u_episodes):
+    for x in m3u_episodes:
+        x.serie_name = clean_square_brackets(x.serie_name)
         yield x
 

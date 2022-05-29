@@ -1,6 +1,6 @@
 """Save files"""
 from dataclasses import dataclass
-from .clean import clean_name, clean_weird_characters
+from .clean import clean_weird_characters
 import pathlib
 
 
@@ -17,7 +17,7 @@ def strm_files_for_episodes(start_dir, m3u_episodes, season_folder=True):
     """Create episodes m3u stream."""
 
     for e in m3u_episodes:
-        name = clean_weird_characters(clean_name(e.serie_name))
+        name = clean_weird_characters(e.serie_name)
         path = pathlib.Path(start_dir)
         path = path.joinpath(name)
         filename = f"{name} S{e.episode_season:02}E{e.episode_nr:02}.strm" 
