@@ -50,3 +50,8 @@ def remove_square_brackets_from_serie_name(m3u_episodes):
         x.serie_name = clean_square_brackets(x.serie_name)
         yield x
 
+def strip_serie_name(m3u_episodes):
+    for x in m3u_episodes:
+        x.serie_name = x.serie_name.strip()
+        yield x
+

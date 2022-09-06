@@ -23,5 +23,5 @@ def m3u_to_episodes(m3uchannels):
             m = regex_name2.findall(mp3channel.tvg_name)
             if len(m) == 0:
                 continue
-        yield M3uEpisode(m[0][0], m[0][1], m[0][2], mp3channel.tvg_sources)
+        yield M3uEpisode(m[0][0].strip(), m[0][1], m[0][2], mp3channel.tvg_sources)
 
