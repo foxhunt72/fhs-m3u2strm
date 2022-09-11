@@ -15,7 +15,7 @@ def vod_group_to_dir(
     season_folders: bool = typer.Option(True, help="add season folders"),
     square_brackets: bool = typer.Option(True, help="remove all text in square backets from string"),
 ):
-    """Console script for fhs_m3u2strm."""
+    """Convert a vod group to strm files in a dir."""
 
     from .import_m3u import import_m3u_file
     from .subgroup import subgroup_m3uchannels
@@ -41,11 +41,52 @@ def vod_group_to_dir(
     return 0
 
 @main.command()
+def vod_groups_to_dir(
+    yamlconfig: str = typer.Option(...),
+    m3ufile: str = typer.Option("", envvar="fhs_m3ufile"),
+    base_dir: str = typer.Option("", help="base directory"),
+):
+    """Convert multiple vod groups to strm files using a yaml config file."""
+    from .vod_groups import load_yamlconfig, check_yamlconfig, convert_group_2_strm
+    from .import_m3u import import_m3u_file
+    from rich.console import Console
+    from rich.table import Table
+
+    cc = load_yamlconfig(yamlconfig)
+    cc = check_yamlconfig(cc, m3ufile, base_dir)
+    #pprint(cc)
+
+    result = import_m3u_file(cc['config']['m3ufile'])
+    if result is None:
+        print(f"no result for file {m3ufile}")
+        return 1
+
+    table = Table(title="M3ufile to groups")
+    table.add_column("Group", style="cyan", footer="Total episodes")
+    table.add_column("Count", justify="right", style="green", no_wrap=True)
+    m3u_records = list(result)
+    #print(f"m3u file total records: {len(m3u_records)}")
+    table.add_row("M3u file", str(len(m3u_records)))
+
+    total_count = 0
+    for group in cc['groups']:
+        total_count += convert_group_2_strm(cc['config'], m3u_records, group, table=table)
+
+    table.show_footer = True
+    table.columns[1].footer=str(total_count)
+
+    console = Console()
+    console.print(table)
+
+
+
+
+@main.command()
 def list_groups(
     m3ufile: str = typer.Option(..., envvar="fhs_m3ufile"),
     vod_only: bool = typer.Option(False)
 ):
-    """Console script for fhs_m3u2strm."""
+    """List vod groups that exists in m3u files."""
     from .import_m3u import import_m3u_file, return_tvg_group_titles
 
     result = import_m3u_file(m3ufile)

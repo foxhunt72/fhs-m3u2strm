@@ -24,10 +24,8 @@ Usage
   
   *optional arguments*
   
-  - **rm-end-name:** remove this text from end of episodes text
-  - **rm-in-name:** remove this text in the episode and/or serie name
-  - **season-folders:** create season folders
-  - **square-brackets:** remove all text within square brackets from episode and/or serie name
+  - **rm-end-name:** remove this end of text of episodes
+  - **rm-in-name
 
 - Listing groups in m3u_file
 

@@ -85,5 +85,10 @@ pytest-failure:
 # bump version number
 bumppatch:
   #!/usr/bin/env sh
-  bumpversion --verbose patch
+  bumpversion --allow-dirty --verbose patch
+
+# edit README.rst
+readme:
+  #!/usr/bin/env sh
+  formiko README.rst
 
