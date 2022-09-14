@@ -12,16 +12,15 @@ class M3uEpisode:
     sources: list
 
 
-def m3u_to_episodes(m3uchannels):
+def m3u_to_episodes(m3uchannels, debug=False):
     """Import m3u stream."""
 
-    regex_name = re.compile('(.*?) S(\d+) E(\d+)')
-    regex_name2 = re.compile('(.*?) S(\d+)E(\d+)')
+    regex_name = re.compile('(.*?) S(\d+) {0,1}E(\d+)')
     for mp3channel in m3uchannels:
         m = regex_name.findall(mp3channel.tvg_name)
         if len(m) == 0:
-            m = regex_name2.findall(mp3channel.tvg_name)
-            if len(m) == 0:
-                continue
+            if debug is True:
+                print(f"{mp3channel.tvg_name=}")
+            continue
         yield M3uEpisode(m[0][0].strip(), m[0][1], m[0][2], mp3channel.tvg_sources)
 

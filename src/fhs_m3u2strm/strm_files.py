@@ -33,3 +33,22 @@ def strm_files_for_episodes(start_dir, m3u_episodes, season_folder=True, verbose
             f.write("\n")
         episodes_count += 1
     return episodes_count
+
+def strm_files_for_movies(start_dir, m3u_movies, verbose=True):
+    """Create episodes m3u stream."""
+
+    episodes_count = 0
+    for e in m3u_movies:
+        name = clean_weird_characters(e.movie_name)
+        path = pathlib.Path(start_dir)
+        filename = f"{name}.strm" 
+        path = path.joinpath(filename)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if verbose is True:
+            print(path)
+        with path.open("w") as f:
+            f.write(e.sources[0])
+            f.write("\n")
+        episodes_count += 1
+    return episodes_count
+

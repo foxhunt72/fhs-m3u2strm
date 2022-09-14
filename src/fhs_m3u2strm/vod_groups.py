@@ -37,11 +37,14 @@ groups:
 """)
 
 
-def check_yamlconfig(config, m3ufile, base_dir):
+def check_yamlconfig(config, m3ufile, base_dir, debug=False):
     if 'config' not in config:
         print('ERROR: missing config in yaml config.')
         help_yamlfile()
         quit(1)
+
+    if 'debug' not in  config['config']:
+        config['config']['debug'] = debug
 
     if 'season_folders' not in config['config']:
         config['config']['season_folders'] = True
@@ -73,7 +76,8 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
     from .subgroup import subgroup_m3uchannels
     from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name
     from .m3u_to_episodes import m3u_to_episodes
-    from .strm_files import strm_files_for_episodes
+    from .m3u_to_movies import m3u_to_movies
+    from .strm_files import strm_files_for_episodes, strm_files_for_movies
 
     base_dir = config['base_dir']
     output_dir = group['output_dir'].replace('{PATH}', base_dir)
@@ -91,13 +95,17 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
     subgroup = subgroup_m3uchannels(m3u_records, group['group'])
     for i in rm_in_name:
         subgroup = remove_text_from_tvg_name(subgroup, i)
-    m3u_episodes = m3u_to_episodes(subgroup)
-    if config['square_brackets'] is True:
-        m3u_episodes = remove_square_brackets_from_serie_name(m3u_episodes)
-    for i in rm_end_name:
-        m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, i)
-    m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
-    count = strm_files_for_episodes(output_dir, m3u_episodes, season_folder=config['season_folders'], verbose=False)
+    if group.get('type','episodes') == 'episodes':
+        m3u_episodes = m3u_to_episodes(subgroup, debug=config['debug'])
+        if config['square_brackets'] is True:
+            m3u_episodes = remove_square_brackets_from_serie_name(m3u_episodes)
+        for i in rm_end_name:
+            m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, i)
+        m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
+        count = strm_files_for_episodes(output_dir, m3u_episodes, season_folder=config['season_folders'], verbose=False)
+    else:
+        m3u_movies = m3u_to_movies(subgroup, debug=config['debug'])
+        count = strm_files_for_movies(output_dir, m3u_movies, verbose=False)
     if table is not None:
         if count == 0:
             table.add_row(group['group'], str(count))

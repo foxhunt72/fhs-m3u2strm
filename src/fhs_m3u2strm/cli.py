@@ -45,6 +45,7 @@ def vod_groups_to_dir(
     yamlconfig: str = typer.Option(...),
     m3ufile: str = typer.Option("", envvar="fhs_m3ufile"),
     base_dir: str = typer.Option("", help="base directory"),
+    debug: bool = typer.Option(False, help="debug"),
 ):
     """Convert multiple vod groups to strm files using a yaml config file."""
     from .vod_groups import load_yamlconfig, check_yamlconfig, convert_group_2_strm
@@ -53,7 +54,7 @@ def vod_groups_to_dir(
     from rich.table import Table
 
     cc = load_yamlconfig(yamlconfig)
-    cc = check_yamlconfig(cc, m3ufile, base_dir)
+    cc = check_yamlconfig(cc, m3ufile, base_dir, debug=debug)
     #pprint(cc)
 
     result = import_m3u_file(cc['config']['m3ufile'])
@@ -96,6 +97,44 @@ def list_groups(
     groups = return_tvg_group_titles(result, vod_only=vod_only)
     for i in groups:
         print(i)
+
+    return 0
+
+
+@main.command()
+def list_groups_details(
+    m3ufile: str = typer.Option(..., envvar="fhs_m3ufile"),
+    vod_only: bool = typer.Option(False)
+):
+    """List vod groups that exists in m3u files, details."""
+
+    from rich.console import Console
+    from rich.table import Table
+    from .import_m3u import import_m3u_file, return_tvg_group_details
+
+    result = import_m3u_file(m3ufile)
+    if result == None:
+        print(f"no result for file {m3ufile}")
+        return 1
+    #result = get_channel_types(result)
+    result_dict = return_tvg_group_details(result)
+    table = Table(title="Groups details")
+    table.add_column("Group", style="cyan", footer="Total")
+    table.add_column("Channels", justify="right", style="green", no_wrap=True)
+    table.add_column("Episodes", justify="right", style="yellow", no_wrap=True)
+    table.add_column("Movies", justify="right", style="green", no_wrap=True)
+
+    for ch in sorted(result_dict.keys()):
+        table.add_row(
+            ch,
+            str(result_dict[ch]['channels']),
+            str(result_dict[ch]['episodes']),
+            str(result_dict[ch]['movies'])
+        )
+
+    console = Console()
+    console.print(table)
+
 
     return 0
 
