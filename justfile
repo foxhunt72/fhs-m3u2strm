@@ -85,7 +85,7 @@ pytest-failure:
 # bump version number
 bumppatch:
   #!/usr/bin/env sh
-  bumpversion --allow-dirty --verbose patch
+  bumpversion --allow-dirty --verbose patch  # major/minor/patch
 
 # edit README.rst
 readme:
