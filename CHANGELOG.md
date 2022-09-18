@@ -13,3 +13,4 @@ fhs-m3u2strm
 - 0.1.5: add list-group-details options
 - 1.0.0: update to version 1.0.0
 - 1.0.1: add strip for group names and change add remove_text_from_serie_name for clean names
+- 1.0.2: fix: removed debug print statement

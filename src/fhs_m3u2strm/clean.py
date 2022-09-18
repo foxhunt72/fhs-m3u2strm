@@ -18,7 +18,6 @@ def clean_tvg_name(m3uchannels):
 def remove_text_from_tvg_name(m3uchannels, text):
     for x in m3uchannels:
         x.tvg_name = x.tvg_name.replace(text, '')
-        print(x.tvg_name)
         yield x
 
 
