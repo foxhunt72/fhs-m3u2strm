@@ -40,7 +40,7 @@ def import_m3u_stream(input_str):
             tvg_name = m[0][1]
             tvg_logo = m[0][2]
             tvg_group_title = m[0][3]
-            m3uchannels.append(M3uChannel(tvg_id=tvg_id, tvg_name = tvg_name, tvg_logo = tvg_logo, tvg_group_title = tvg_group_title))
+            m3uchannels.append(M3uChannel(tvg_id=tvg_id, tvg_name = tvg_name.strip(), tvg_logo = tvg_logo, tvg_group_title = tvg_group_title.strip()))
         else:
             if urlpattern.match(clean_line):
                 # This is the URL Line

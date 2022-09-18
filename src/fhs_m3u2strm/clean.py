@@ -18,6 +18,7 @@ def clean_tvg_name(m3uchannels):
 def remove_text_from_tvg_name(m3uchannels, text):
     for x in m3uchannels:
         x.tvg_name = x.tvg_name.replace(text, '')
+        print(x.tvg_name)
         yield x
 
 
@@ -33,6 +34,12 @@ def remove_text_from_end_serie_name(m3u_episodes, text):
         if x.serie_name.endswith(text):
             x.serie_name = x.serie_name[0:-len(text)]
         yield x
+
+def remove_text_from_serie_name(m3u_episodes, text):
+    for x in m3u_episodes:
+        x.serie_name = x.serie_name.replace(text, '')
+        yield x
+
 
 def clean_square_brackets(tekst):
     test = re.compile("(.*)\[(.*?)\](.*)")
@@ -53,5 +60,10 @@ def remove_square_brackets_from_serie_name(m3u_episodes):
 def strip_serie_name(m3u_episodes):
     for x in m3u_episodes:
         x.serie_name = x.serie_name.strip()
+        yield x
+
+def clean_weird_characters_serie_name(m3u_episodes):
+    for x in m3u_episodes:
+        x.serie_name = clean_weird_characters(x.serie_name)
         yield x
 

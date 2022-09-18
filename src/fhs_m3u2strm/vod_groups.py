@@ -74,7 +74,7 @@ def check_yamlconfig(config, m3ufile, base_dir, debug=False):
 
 def convert_group_2_strm(config, m3u_records, group, table=None):
     from .subgroup import subgroup_m3uchannels
-    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name
+    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name, clean_weird_characters_serie_name, remove_text_from_serie_name
     from .m3u_to_episodes import m3u_to_episodes
     from .m3u_to_movies import m3u_to_movies
     from .strm_files import strm_files_for_episodes, strm_files_for_movies
@@ -99,6 +99,9 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
         m3u_episodes = m3u_to_episodes(subgroup, debug=config['debug'])
         if config['square_brackets'] is True:
             m3u_episodes = remove_square_brackets_from_serie_name(m3u_episodes)
+        m3u_episodes = clean_weird_characters_serie_name(m3u_episodes)  # clean weird characters
+        for i in rm_in_name:
+            m3u_episodes = remove_text_from_serie_name(m3u_episodes, i)
         for i in rm_end_name:
             m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, i)
         m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
