@@ -1,6 +1,6 @@
 """fhs_m3u2strm - m3u gitlab to strm files for iptv2vod services versions """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 __author__ = "Richard de Vos <rdevos72@gmail.com>"
 __author_name__ = "Richard de Vos"
 __author_email__ = "rdevos72@gmail.com"

@@ -74,10 +74,25 @@ def check_yamlconfig(config, m3ufile, base_dir, debug=False):
 
 def convert_group_2_strm(config, m3u_records, group, table=None):
     from .subgroup import subgroup_m3uchannels
-    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name, clean_weird_characters_serie_name, remove_text_from_serie_name
+    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name, clean_weird_characters_serie_name, remove_text_from_serie_name, remove_regex_from_serie_name
     from .m3u_to_episodes import m3u_to_episodes
     from .m3u_to_movies import m3u_to_movies
     from .strm_files import strm_files_for_episodes, strm_files_for_movies
+
+    if 'rm_in_name' in config:
+        rm_in_name_config = [config['rm_in_name']] if type(config['rm_in_name']) == str else config['rm_in_name']
+    else:
+        rm_in_name_config = []
+
+    if 'rm_end_name' in config:
+        rm_end_name_config = [config['rm_end_name']] if type(config['rm_end_name']) == str else config['rm_end_name']
+    else:
+        rm_end_name_config = []
+
+    if 'rm_regex_name' in config:
+        rm_regex_name_config = [config['rm_regex_name']] if type(config['rm_regex_name']) == str else config['rm_regex_name']
+    else:
+        rm_regex_name_config = []
 
     base_dir = config['base_dir']
     output_dir = group['output_dir'].replace('{PATH}', base_dir)
@@ -85,10 +100,17 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
         rm_in_name = [group['rm_in_name']] if type(group['rm_in_name']) == str else group['rm_in_name']
     else:
         rm_in_name = []
+
     if 'rm_end_name' in group:
         rm_end_name = [group['rm_end_name']] if type(group['rm_end_name']) == str else group['rm_end_name']
     else:
         rm_end_name = []
+
+    if 'rm_regex_name' in group:
+        rm_regex_name = [group['rm_regex_name']] if type(group['rm_regex_name']) == str else group['rm_regex_name']
+    else:
+        rm_regex_name = []
+
     if 'group' not in group:
         print(f"ERROR: missing 'group' in group: {str(group)}")
         quit(3)
@@ -100,10 +122,12 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
         if config['square_brackets'] is True:
             m3u_episodes = remove_square_brackets_from_serie_name(m3u_episodes)
         m3u_episodes = clean_weird_characters_serie_name(m3u_episodes)  # clean weird characters
-        for i in rm_in_name:
+        for i in rm_in_name + rm_in_name_config:
             m3u_episodes = remove_text_from_serie_name(m3u_episodes, i)
-        for i in rm_end_name:
+        for i in rm_end_name + rm_end_name_config:
             m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, i)
+        for i in rm_regex_name + rm_regex_name_config:
+            m3u_episodes = remove_regex_from_serie_name(m3u_episodes, i)
         m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
         count = strm_files_for_episodes(output_dir, m3u_episodes, season_folder=config['season_folders'], verbose=False)
     else:

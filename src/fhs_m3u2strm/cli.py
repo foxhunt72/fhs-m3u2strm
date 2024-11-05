@@ -12,6 +12,7 @@ def vod_group_to_dir(
     output_dir: str = typer.Option(...),
     rm_end_name: str = typer.Option("", help="remove text from end of serie name"),
     rm_in_name: str = typer.Option("", help="remove text in tvg_name"),
+    rm_regex_name: str = typer.Option("", help="remove regex in serie name"),
     season_folders: bool = typer.Option(True, help="add season folders"),
     square_brackets: bool = typer.Option(True, help="remove all text in square backets from string"),
 ):
@@ -19,7 +20,7 @@ def vod_group_to_dir(
 
     from .import_m3u import import_m3u_file
     from .subgroup import subgroup_m3uchannels
-    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name
+    from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_regex_from_serie_name, remove_square_brackets_from_serie_name, strip_serie_name
     from .m3u_to_episodes import m3u_to_episodes
     from .strm_files import strm_files_for_episodes
 
@@ -35,6 +36,8 @@ def vod_group_to_dir(
         m3u_episodes = remove_square_brackets_from_serie_name(m3u_episodes)
     if rm_end_name != "":
         m3u_episodes = remove_text_from_end_serie_name(m3u_episodes, rm_end_name)
+    if rm_regex_name != "":
+        m3u_episodes = remove_regex_from_serie_name(m3u_episodes, rm_regex_name)
     m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
     strm_files_for_episodes(output_dir, m3u_episodes, season_folder=season_folders)
 

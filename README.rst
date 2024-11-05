@@ -30,6 +30,7 @@ Usage
   
   - **rm-end-name:** remove this text from end of episodes text
   - **rm-in-name:** remove this text in the episode and/or serie name
+  - **rm-regex-name:** remove this regex in the episode and/or serie name
   - **season-folders:** create season folders
   - **square-brackets:** remove all text within square brackets from episode and/or serie name
 
@@ -73,11 +74,17 @@ For vod-groups-to-dir
     square_brackets: true
     m3ufile: path to m3ufile   (optional also posible by argument)
     base_dir: base directory   (optional also posible by argument)
+    rm_regex_name:             (optional here, for all groups, also rm_in_name and rm_end_name can be used in the config part)
+      - " S\\d{2} .*$"
+      - " S\\d{2}$"
   groups:
     - group: 'GROUP1'
       output_dir: "{PATH}/group1"
       rm_in_name:  "GRP "
       rm_end_name: " STAGE"
+      rm_regex_name:           (or here for only one group)
+        - " S\\d{2} .*$"
+        - " S\\d{2}$"
     - group: 'GROUP2'
       output_dir: "{PATH}/group2"
       rm_in_name:  "EN "

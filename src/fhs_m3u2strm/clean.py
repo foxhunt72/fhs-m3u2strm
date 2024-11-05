@@ -39,6 +39,11 @@ def remove_text_from_serie_name(m3u_episodes, text):
         x.serie_name = x.serie_name.replace(text, '')
         yield x
 
+def remove_regex_from_serie_name(m3u_episodes, regex):
+    for x in m3u_episodes:
+        x.serie_name = re.sub(regex, '', x.serie_name)
+        yield x
+
 
 def clean_square_brackets(tekst):
     test = re.compile("(.*)\[(.*?)\](.*)")
