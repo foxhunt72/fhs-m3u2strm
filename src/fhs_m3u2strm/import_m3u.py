@@ -1,4 +1,4 @@
-"""Import m3u"""
+"""I:mport m3u"""
 import re
 from pprint import pprint
 from dataclasses import dataclass, field
@@ -47,7 +47,13 @@ def import_m3u_stream(input_str):
                 m3uchannels[-1].tvg_sources.append(clean_line)
                 if clean_line.endswith('.mkv') is True:
                     m3uchannels[-1].vod = True
+                if clean_line.endswith('.flv') is True:
+                    m3uchannels[-1].vod = True
+                if clean_line.endswith('.mk') is True:
+                    m3uchannels[-1].vod = True
                 if clean_line.endswith('.avi') is True:
+                    m3uchannels[-1].vod = True
+                if clean_line.endswith('.mpg') is True:
                     m3uchannels[-1].vod = True
                 if clean_line.endswith('.mp4') is True:
                     m3uchannels[-1].vod = True
@@ -169,4 +175,17 @@ def return_tvg_group_details(m3u_channels, vod_only=False):
             group_info['movies'] += 1
         tvg_groups[ch.tvg_group_title] = group_info
     return tvg_groups
+
+
+def split_channels_to_types(m3u_channels):
+    """Split channel to types."""
+    tagged_channels = get_channel_types(m3u_channels)
+    result = dict()
+    for i in tagged_channels:
+        typegroup = i.tvg_type.name
+        subgroup_list = result.get(typegroup, list())
+        subgroup_list.append(i)
+        result[typegroup] = subgroup_list
+    return result
+
 

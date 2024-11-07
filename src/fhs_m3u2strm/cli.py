@@ -100,7 +100,6 @@ def list_groups(
     groups = return_tvg_group_titles(result, vod_only=vod_only)
     for i in groups:
         print(i)
-
     return 0
 
 
@@ -138,6 +137,39 @@ def list_groups_details(
     console = Console()
     console.print(table)
     return 0
+
+
+@main.command()
+def list_group(
+    m3ufile: str = typer.Option(..., envvar="fhs_m3ufile"),
+    group: str = typer.Option(..., help="group to list"),
+):
+    """List vod groups that exists in m3u files, details."""
+
+    from .import_m3u import import_m3u_file, split_channels_to_types
+    from .subgroup import subgroup_m3uchannels
+    from .m3u_to_episodes import m3u_to_series
+
+    result = import_m3u_file(m3ufile)
+    if result == None:
+        print(f"no result for file {m3ufile}")
+        return 1
+    subgroup = subgroup_m3uchannels(result, group)
+    split_types = split_channels_to_types(subgroup)
+    #pprint(split_types)
+    for i in split_types:
+        if i == "EPISODE":
+            names = m3u_to_series(split_types[i])
+            i = "SERIES"
+        else:
+            names = [i.tvg_name for i in split_types[i]]
+        title = f"TYPE: {i}"
+        print(title)
+        print("=" * len(title))
+        for j in names:
+              print(j)
+        print("")
+
 
 @main.command()
 def search_shows(
