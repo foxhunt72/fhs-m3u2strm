@@ -73,7 +73,7 @@ def check_yamlconfig(config, m3ufile, base_dir, debug=False):
     return config
 
 def convert_group_2_strm(config, m3u_records, group, table=None):
-    from .subgroup import subgroup_m3uchannels
+    from .subgroup import subgroup_m3uchannels, subgroup_filter_on_include
     from .clean import remove_text_from_tvg_name, remove_text_from_end_serie_name, remove_square_brackets_from_serie_name, strip_serie_name, clean_weird_characters_serie_name, remove_text_from_serie_name, remove_regex_from_serie_name
     from .m3u_to_episodes import m3u_to_episodes
     from .m3u_to_movies import m3u_to_movies
@@ -111,10 +111,17 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
     else:
         rm_regex_name = []
 
+    if 'include' in group:
+        include = [group['include']] if type(group['include']) == str else group['include']
+    else:
+        include = None
+
     if 'group' not in group:
         print(f"ERROR: missing 'group' in group: {str(group)}")
         quit(3)
     subgroup = subgroup_m3uchannels(m3u_records, group['group'])
+    if include is not None:
+        subgroup = subgroup_filter_on_include(subgroup, include)
     for i in rm_in_name:
         subgroup = remove_text_from_tvg_name(subgroup, i)
     if group.get('type','episodes') == 'episodes':
@@ -131,6 +138,7 @@ def convert_group_2_strm(config, m3u_records, group, table=None):
         m3u_episodes = strip_serie_name(m3u_episodes)  # clean whitespaces around serie name
         count = strm_files_for_episodes(output_dir, m3u_episodes, season_folder=config['season_folders'], verbose=False)
     else:
+        # FOXTODO add rm_in_name, rm_end_name and rm_regex_name also for movies
         m3u_movies = m3u_to_movies(subgroup, debug=config['debug'])
         count = strm_files_for_movies(output_dir, m3u_movies, verbose=False)
     if table is not None:

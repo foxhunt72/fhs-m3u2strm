@@ -120,7 +120,7 @@ def list_groups_details(
         print(f"no result for file {m3ufile}")
         return 1
     #result = get_channel_types(result)
-    result_dict = return_tvg_group_details(result)
+    result_dict = return_tvg_group_details(result, vod_only=vod_only)
     table = Table(title="Groups details")
     table.add_column("Group", style="cyan", footer="Total")
     table.add_column("Channels", justify="right", style="green", no_wrap=True)
@@ -137,8 +137,56 @@ def list_groups_details(
 
     console = Console()
     console.print(table)
+    return 0
 
+@main.command()
+def search_shows(
+    m3ufile: str = typer.Option(..., envvar="fhs_m3ufile"),
+    search: str = typer.Option(..., help="remove text from end of serie name"),
+    vod_only: bool = typer.Option(False),
+    ignore_case: bool = typer.Option(True)
+):
+    """List vod groups that exists in m3u files, details."""
 
+    from .import_m3u import import_m3u_file, return_tvg_group_details, subgroup_vod_only, get_channel_types, ChannelType
+    from .m3u_to_episodes import m3u_to_episodes
+
+    result = import_m3u_file(m3ufile)
+    found = dict()
+    if ignore_case is True:
+        search = search.upper()
+    if result == None:
+        print(f"no result for file {m3ufile}")
+        return 1
+    if vod_only is True:
+        channels = subgroup_vod_only(result)
+    else:
+        channels = result
+    for ch in get_channel_types(channels):
+        if ignore_case is True:
+            if search not in ch.tvg_name.upper():
+                continue
+        else:
+            if search not in ch.tvg_name:
+                continue
+        if ch.tvg_type == ChannelType.MOVIE:
+            show_add = found.get(ch.tvg_group_title, set())
+            show_add.add(ch.tvg_name)
+            found[ch.tvg_group_title] = show_add
+        else:
+            temp = [ch]
+            result = list(m3u_to_episodes(temp))
+            show_add = found.get(ch.tvg_group_title, set())
+            show_add.add(result[0].serie_name)
+            found[ch.tvg_group_title] = show_add
+
+    for i in found:
+        title = f"GROUP: {i}"
+        print(title)
+        print("=" * len(title))
+        for j in found[i]:
+              print(j)
+        print("")
     return 0
 
 if __name__ == "__main__":

@@ -15,3 +15,4 @@ fhs-m3u2strm
 - 1.0.1: add strip for group names and change add remove_text_from_serie_name for clean names
 - 1.0.2: fix: removed debug print statement
 - 1.0.3: add rm_regex_name to cleanup title for example:  rm_regex_name: " S\\d{2} .*$"
+- 1.0.4: add search for serie or movie options and add include in yaml to not add all series but only what you need.
